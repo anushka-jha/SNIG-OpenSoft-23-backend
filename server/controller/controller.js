@@ -1,4 +1,6 @@
 var Userdb = require('../model/model');
+// const Userdb = require("./models/userdbs");
+// const Bankdb = require("./models/bankdbs");
 
 //create and save new User
 exports.create = (req, res)=>{
@@ -13,8 +15,8 @@ exports.create = (req, res)=>{
     const user= new Userdb({
         name: req.body.name,
         email: req.body.email,
-        gender: req.body.gender,
-        status: req.body.status
+        username: req.body.username,
+        password: req.body.password
     })
 
     //save user data in database

@@ -1,3 +1,5 @@
+//This is a Node.js module that connects to a MongoDB database using Mongoose
+
 const mongoose= require('mongoose');
 
 const connectDB = async()=>{

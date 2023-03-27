@@ -1,6 +1,9 @@
+//This is a Node.js module that defines a Mongoose schema for a User
+//and exports it as a model for use in other parts of the application.
+
 const mongoose= require('mongoose');
 
-var schema = new mongoose.Schema({
+var userSchema = new mongoose.Schema({
     name:{
         type: String,
         required: true
@@ -10,10 +13,67 @@ var schema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    gender: String, 
-    status: String
+    country:{
+        type: String,
+        required: true
+    },
+    city:{
+        type: String,
+        required: true
+    },
+    phNum:{
+        type: int,
+        required: true,
+        unique: true
+    },
+    username:{
+        type: String,
+        required: true,
+        unique: true
+    },
+    password:{
+        type: String,
+        required: true,
+        unique: true
+    },
+    confirmPassword: {
+        type: String,
+        required: true,
+        unique: true
+    }
 })
 
-const Userdb = mongoose.model('userdb', schema);
+var bankSchema = new mongoose.Schema({
+    accNum:{
+        type: int,
+        required: true,
+        unique: true
+    },
+    bankName:{
+        type: String,
+        required: true
+    },
+    ifscCode:{
+        type: String,
+        required: true,
+        unique: true 
+    },
+    accHolderName:{
+        type: String,
+        required: true
+    },
+    phNum:{
+        type: int,
+        required: true,
+        unique: true
+    },
+    aadharCardNum:{
+        type: int,
+        required: true,
+        unique: true
+    }
+})
 
+const Userdb = mongoose.model('userdb', userSchema);
+const Bankdb = mongoose.model('bankdb', bankSchema);
 module.exports = Userdb;
