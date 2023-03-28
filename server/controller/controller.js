@@ -2,6 +2,28 @@ var Userdb = require('../model/model');
 // const Userdb = require("./models/userdbs");
 // const Bankdb = require("./models/bankdbs");
 
+
+// API for login page
+exports.post('/login', (req,res) => {
+    if(!req.body){
+        res.status(400).send({message: "Content cannot be empty"});
+        return;
+    }
+    else if(req.body.username == user.username && req.body.password == user.password){
+        if(req.body.confirmPassword == user.confirmPassword){
+            req.session.user ==req.body.email;
+            res.redirect('/dashboard');
+        }
+        else{
+            res.end("You entered the wrong password!")
+        }
+    }
+    else{
+        res.end("Invalid Login Details!")
+    }
+
+});
+
 //create and save new User
 exports.create = (req, res)=>{
     //validate request
