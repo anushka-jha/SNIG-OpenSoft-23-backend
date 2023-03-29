@@ -68,7 +68,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const registerBankUser = asyncHandler(async (req, res) => {
     const { accNum, bankName,ifscCode,accHolderName,phNum,aadharCardNum } = req.body
   
-    const userExists = await User.findOne({accNum})
+    const userExists = await User.findOne({accHolderName})
   
     if (userExists) {
       res.status(400)
@@ -128,9 +128,22 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 //exports.delete=(req, res)=>{
 
 //}
+const deleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id)
+
+  if (user) {
+    await user.remove()
+    res.json({ message: 'User removed' })
+  } else {
+    res.status(404)
+    throw new Error('User not found')
+  }
+})
+
 module.export = {
     authUser,
     registerUser,
     registerBankUser,
-    updateUserProfile
+    updateUserProfile,
+    deleteUser
 }
