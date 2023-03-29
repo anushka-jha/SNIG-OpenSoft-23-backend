@@ -22,7 +22,7 @@ var userSchema = new mongoose.Schema({
         required: true
     },
     phNum:{
-        type: int,
+        type: Number,
         required: true,
         unique: true
     },
@@ -45,7 +45,7 @@ var userSchema = new mongoose.Schema({
 
 var bankSchema = new mongoose.Schema({
     accNum:{
-        type: int,
+        type: Number,
         required: true,
         unique: true
     },
@@ -63,12 +63,12 @@ var bankSchema = new mongoose.Schema({
         required: true
     },
     phNum:{
-        type: int,
+        type: Number,
         required: true,
         unique: true
     },
     aadharCardNum:{
-        type: int,
+        type: Number,
         required: true,
         unique: true
     }
