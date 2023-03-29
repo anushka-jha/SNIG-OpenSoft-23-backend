@@ -1,6 +1,6 @@
 var Userdb = require('../model/model');
 // const Userdb = require("./models/userdbs");
-// const Bankdb = require("./models/bankdbs");
+var Bankdb = require("./models/bankdbs");
 
 
 // Verify user on login page
