@@ -3,7 +3,7 @@ var Userdb = require('../model/model');
 // const Bankdb = require("./models/bankdbs");
 
 
-// API for login page
+// Verify user on login page
 exports.post('/login', (req,res) => {
     if(!req.body){
         res.status(400).send({message: "Content cannot be empty"});
@@ -49,6 +49,37 @@ exports.create = (req, res)=>{
     //save user data in database
 user
     .save(user)
+    .then(data =>{
+        res.send(data)
+    })
+    .catch(err =>{
+        res.status(500).send({
+            message: err.message || "Some error occured while creating a create operation"
+        });
+    });
+}
+
+//create and save user's new bank details
+exports.create = (req, res)=>{
+    //validate request
+    if(!req.body){
+        res.status(400).send({message: "Content cannot be empty"});
+        return;
+    }
+
+    // account is instance of Bankdb module 
+    const user= new Bankdb({
+        accNum: req.body.accNum,
+        bankName: req.body.bankName,
+        ifscCode: req.body.ifscCode,
+        accHolderName: req.body.accHolderName,
+        phNum: req.body.phNum,
+        aadharCardNum: req.body.aadharCardNum
+    })
+
+    //save bank data in bank database
+user
+    .save(account)
     .then(data =>{
         res.send(data)
     })
