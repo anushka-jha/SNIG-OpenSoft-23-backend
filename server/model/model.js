@@ -77,3 +77,4 @@ var bankSchema = new mongoose.Schema({
 const Userdb = mongoose.model('userdb', userSchema);
 const Bankdb = mongoose.model('bankdb', bankSchema);
 module.exports = Userdb;
+module.exports = Bankdb;
