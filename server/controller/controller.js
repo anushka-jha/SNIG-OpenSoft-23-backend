@@ -26,16 +26,18 @@ const authUser = asyncHandler(async (req, res) => {
   })
 
 // Logout user
-// const logOutUser = asyncHandler(async (req, res) => {
-//     req.session.destroy(function(err){
-//         if(err){
-//             console.log(err);
-//             res.send("Error")
-//         }else{
-//             res.render('base', {title: "Express", logout: "logout successfull!"})
-//         }
-//     })
-// })
+const logOutUser = asyncHandler(async (req, res) => {
+    req.session.destroy(function(err){
+        if(err){
+            console.log(err);
+            res.send("Error")
+        }else{
+            res.render('index', {title: "login", logout: "logout successfull!"})
+        }
+    })
+})
+//taken from following vid, refer if any error
+//https://www.youtube.com/watch?v=NNzwjWXUiLU&list=PLynWqC6VC9KMwdsbBIG68YEBMlUrTwed-&index=37
 
 //create and save new User
 const registerUser = asyncHandler(async (req, res) => {
@@ -154,6 +156,7 @@ const deleteUser = asyncHandler(async (req, res) => {
 
 module.export = {
     authUser,
+    logOutUser,
     registerUser,
     registerBankUser,
     updateUserProfile,
