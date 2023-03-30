@@ -1,146 +1,164 @@
-var express = require('express');
-var app = express();
-var Userdb = require('../model/model');
- //const Userdb = require("./models/userdbs");
-var Bankdb = require("./models/bankdbs");
-
+const asyncHandler = require('express-async-handler');
+var User = require('../model/model');
+// const Userdb = require("./models/userdbs");
+// const Bankdb = require("./models/bankdbs");
 
 // Verify user on login page
-exports.post('/login', (req,res) => {
+const authUser = asyncHandler(async (req, res) => {
+    const { email, password } = req.body
+    const user = await User.findOne({ email })
     if(!req.body){
         res.status(400).send({message: "Content cannot be empty"});
         return;
     }
-    else if(req.body.username == user.username && req.body.password == user.password){
-        if(req.body.confirmPassword == user.confirmPassword){
-            req.session.user ==req.body.email;
-            res.redirect('/dashboard');
-        }
-        else{
-            res.end("You entered the wrong password!")
-        }
+    else if (user && (await user.matchPassword(password))) {
+      res.json({
+        username: user.username,
+        confirmPassword : user.confirmPassword,
+        email: user.email,
+      } ) 
+      res.redirect('/dashboard');
+    } 
+    else {
+      res.status(401)
+      throw new Error('Invalid email or password')
     }
-    else{
-        res.end("Invalid Login Details!")
-    }
+  })
 
-});
+// Logout user
+const logOutUser = asyncHandler(async (req, res) => {
+    req.session.destroy(function(err){
+        if(err){
+            console.log(err);
+            res.send("Error")
+        }else{
+            res.render('index', {title: "login", logout: "logout successfull!"})
+        }
+    })
+})
+//taken from following vid, refer if any error
+//https://www.youtube.com/watch?v=NNzwjWXUiLU&list=PLynWqC6VC9KMwdsbBIG68YEBMlUrTwed-&index=37
 
 //create and save new User
-exports.create = (req, res)=>{
-    //validate request
-    if(!req.body){
-        res.status(400).send({message: "Content cannot be empty"});
-        return;
+const registerUser = asyncHandler(async (req, res) => {
+    const {name, email,password,country,city,phNum,username,confirmPassword} = req.body
+  
+    const userExists = await User.findOne({ email })
+  
+    if (userExists) {
+      res.status(400)
+      throw new Error('User already exists')
     }
-
-    //this is test commit
-    //new user
-    // user is instance of Userdb module 
-    const user= new Userdb({
-        name: req.body.name,
-        email: req.body.email,
-        country: req.body.country,
-        city: req.body.city,
-        phNum: req.body.phNum,
-        username: req.body.username,
-        password: req.body.password,
-        confirmPassword: req.body.confirmPassword
+  
+    const user = await User.create({
+      name,
+      email,
+      password,
+      country,
+      city,
+      phNum,
+      username,
+      password,
+      confirmPassword
     })
-
-    //save user data in database
-user
-    .save(user)
-    .then(data =>{
-        res.send(data)
-    })
-    .catch(err =>{
-        res.status(500).send({
-            message: err.message || "Some error occured while creating a create operation"
-        });
-    });
-}
-
-//create and save user's new bank details
-exports.create = (req, res)=>{
-    //validate request
-    if(!req.body){
-        res.status(400).send({message: "Content cannot be empty"});
-        return;
+  
+    if (user) {
+      res.status(201).json({
+        name: user.name,
+        email: user.email,
+        country : user.country,
+        city : user.city,
+        phNum : user.phNum,
+        username : user.username,
+        password : user.password ,
+      confirmPassword : user.confirmPassword
+      })
+    } else {
+      res.status(400)
+      throw new Error('Invalid user data')
     }
+  })
 
-    // account is instance of Bankdb module 
-    const user= new Bankdb({
-        accNum: req.body.accNum,
-        bankName: req.body.bankName,
-        ifscCode: req.body.ifscCode,
-        accHolderName: req.body.accHolderName,
-        phNum: req.body.phNum,
-        aadharCardNum: req.body.aadharCardNum
+  const registerBankUser = asyncHandler(async (req, res) => {
+    const { accNum, bankName,ifscCode,accHolderName,phNum,aadharCardNum } = req.body
+  
+    const userExists = await User.findOne({accHolderName})
+  
+    if (userExists) {
+      res.status(400)
+      throw new Error('User already exists')
+    }
+  
+    const user = await User.create({
+        accNum, 
+        bankName,
+        ifscCode,
+        accHolderName,
+        phNum,
+        aadharCardNum
     })
-
-    //save bank data in bank database
-user
-    .save(account)
-    .then(data =>{
-        res.send(data)
-    })
-    .catch(err =>{
-        res.status(500).send({
-            message: err.message || "Some error occured while creating a create operation"
-        });
-    });
-}
-
-//retrieve and return all users/ a single user
-exports.find = (req, res)=>{
-    Userdb.find()
-    .then(user=>{
-        res.send(user)
-    })
-    .catch(err=>{
-        res.status(500).send({message:err.message||"Error Occured while retriving user information"})
-    })
-}
-
+  
+    if (user) {
+      res.status(201).json({
+        accNum: user.accNum,
+        bankName: user.bankName,
+        ifscCode: user.ifscCode,
+        accHolderName: user.accHolderName,
+        phNum: user.phNum,
+        aadharCardNum:user.aadharCardNum
+      })
+    } else {
+      res.status(400)
+      throw new Error('Invalid user data')
+    }
+  })
+ 
 //update a new identified user by user id
-exports.update=(req, res)=>{
- if(!req.body){
-    return res
-     .status(400)
-     .send({message:"Data to update can not be empty"})
- }
- const id = req.params.id;
-    Userdb.findByIdAndUpdate(id, req.body, { useFindAndModify: false})
-        .then(data => {
-            if(!data){
-                res.status(404).send({ message : `Cannot Update user with ${id}. Maybe user not found!`})
-            }else{
-                res.send(data)
-            }
-        })
-        .catch(err =>{
-            res.status(500).send({ message : "Error Update user information"})
-        })
-}
-
+const updateUserProfile = asyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id)
+  
+    if (user) {
+      user.name = req.body.name || user.name
+      user.email = req.body.email || user.email
+      if (req.body.password) {
+        user.password = req.body.password
+      }
+  
+      const updatedUser = await user.save()
+  
+      res.json({
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        
+      })
+    } else {
+      res.status(404)
+      throw new Error('User not found')
+    }
+  })
+  
 //Delete a user with specified user id in the request
-exports.delete=(req, res)=>{
-    const id = req.params.id;
+//exports.delete=(req, res)=>{
 
-    Bankdb.findByIdAndDelete(id)
-        .then(data => {
-            if(!data){
-                res.status(404).send({ message : `Cannot Delete with id ${id}. Maybe id is wrong`})
-            }else{
-                res.send({
-                    message : "Account was deleted successfully!"
-                })
-            }
-        })
-        .catch(err =>{
-            res.status(500).send({
-                message: "Could not delete account with id=" + id
-            });
-        });
+//}
+const deleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id)
+
+  if (user) {
+    await user.remove()
+    res.json({ message: 'User removed' })
+  } else {
+    res.status(404)
+    throw new Error('User not found')
+  }
+})
+
+module.export = {
+    authUser,
+    logOutUser,
+    registerUser,
+    registerBankUser,
+    updateUserProfile,
+    deleteUser
 }

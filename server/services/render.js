@@ -1,5 +1,11 @@
 exports.homeRoutes= (req, res)=>{
-    res.render('index');
+    axios.get("")
+     .then(function(response){
+        res.render('index', {users: response.data});
+     })
+     .catch(err => {
+        res.send(err);
+     })
 }
 
 exports.add_user=(req, res)=>{
@@ -7,5 +13,6 @@ exports.add_user=(req, res)=>{
 } 
 
 exports.update_user=(req, res)=>{
+    axios.get("")
     res.render('update_user');
 }
