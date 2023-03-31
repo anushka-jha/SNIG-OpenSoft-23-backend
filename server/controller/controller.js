@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 var User = require('../model/model');
 // const Userdb = require("./models/userdbs");
 // const Bankdb = require("./models/bankdbs");
+// const paymentdb = require("./models/paymentdbs");
 
 // Verify user on login page
 const authUser = asyncHandler(async (req, res) => {
@@ -140,7 +141,6 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   
 //Delete a user with specified user id in the request
 //exports.delete=(req, res)=>{
-
 //}
 const deleteUser = asyncHandler(async (req, res) => {
   const user = await User.findById(req.params.id)
@@ -154,11 +154,34 @@ const deleteUser = asyncHandler(async (req, res) => {
   }
 })
 
+// store payment information entered by user 
+const paymentUser = asyncHandler(async (req, res) => {
+
+    // Creating a new instance of a model `paymentdb` with the extracted data
+    const newPayment = new paymentdb({
+      accNum, ifscCode, recipientName, description
+    })
+
+     // Saving the new payment in the database using `save()` method of the model
+    newPayment
+    .save(newPayment)
+    .then(register=>{
+      res.json(register)
+    })
+      .catch(error=>{
+      res.status(400).json({err: error.message || "Something went wrong"})
+    })
+
+    res.json({accNum, ifscCode, recipientName, description});
+  })
+
+
 module.export = {
     authUser,
     logOutUser,
     registerUser,
     registerBankUser,
     updateUserProfile,
-    deleteUser
+    deleteUser,
+    paymentUser
 }

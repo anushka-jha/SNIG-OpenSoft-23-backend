@@ -74,7 +74,31 @@ var bankSchema = new mongoose.Schema({
     }
 })
 
+var paymentSchema = new mongoose.Schema({
+    accNum:{
+        type: Number,
+        required: true,
+        unique: true
+    },
+    ifscCode:{
+        type: String,
+        required: true,
+        unique: true 
+    },
+    recipientName:{
+        type: String,
+        required: true
+    },
+    description:{
+        type: String,
+        required: true
+    }
+})
+
 const Userdb = mongoose.model('userdb', userSchema);
 const Bankdb = mongoose.model('bankdb', bankSchema);
+const Paymentdb = mongoose.model('paymentdb', paymentSchema);
+
 module.exports = Userdb;
 module.exports = Bankdb;
+module.exports = Paymentdb;
